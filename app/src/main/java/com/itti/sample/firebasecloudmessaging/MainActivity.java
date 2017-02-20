@@ -5,16 +5,22 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+
+
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -22,10 +28,35 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                // Get updated InstanceID token.
+                String token = FirebaseInstanceId.getInstance().getToken();
+                Log.d(TAG, "Token: " + token);
+
+                Snackbar.make(view, "Token: " + token, Snackbar.LENGTH_LONG)
+                        .setAction("Hide", null).show();
             }
         });
+
+        /**
+        //check if google play services is available and show resolve dialog
+        int error = GoogleApiAvailability.isGooglePlayServicesAvailable(this);
+        if(error != ConnectionResult.SUCCESS) {
+            // TODO: 19/02/17 show error dialog
+        }
+        **/
+
+        //retrieve notification data from background
+        if (getIntent().getExtras() != null) {
+            for (String key : getIntent().getExtras().keySet()) {
+                Object value = getIntent().getExtras().get(key);
+                Log.d(TAG, "Key: " + key + " Value: " + value);
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
